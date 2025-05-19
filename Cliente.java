@@ -9,7 +9,7 @@ public class Cliente {
 
     public void iniciar() {
         try {
-            socket = new Socket("10.226.220.6", 1234);
+            socket = new Socket("192.168.100.37", 12345);
             System.out.println("Conectado al servidor");
 
             entrada = new DataInputStream(socket.getInputStream());
