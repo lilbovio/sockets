@@ -1,18 +1,30 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import javax.swing.*;
 
+/**
+ * InterfazCliente
+ * 
+ * Esta clase implementa una interfaz gráfica de cliente para un chat usando sockets.
+ * Permite conectarse a un servidor, enviar y recibir mensajes en tiempo real utilizando hilos.
+ */
 public class InterfazCliente extends JFrame {
+    // Área de texto para mostrar la conversación
     private JTextArea areaConversacion;
+    // Campo de texto para escribir mensajes
     private JTextField campoMensaje;
+    // Botón para enviar mensajes
     private JButton botonEnviar;
 
+    // Socket y flujos de entrada/salida para la comunicación
     private Socket socket;
     private DataOutputStream salida;
     private DataInputStream entrada;
 
+    /**
+     * Constructor: Inicializa la interfaz gráfica y conecta al servidor.
+     */
     public InterfazCliente() {
         setTitle("Cliente - Chat");
         setSize(400, 500);
@@ -34,16 +46,22 @@ public class InterfazCliente extends JFrame {
         add(scroll, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
+        // Acción al presionar el botón enviar
         botonEnviar.addActionListener(e -> enviarMensaje());
 
+        // Conectar al servidor en un hilo separado
         conectarAlServidor();
 
         setVisible(true);
     }
 
+    /**
+     * Conecta al servidor usando sockets y crea un hilo para recibir mensajes.
+     */
     private void conectarAlServidor() {
         new Thread(() -> {
             try {
+                // Solicita la IP del servidor al usuario
                 String ip = JOptionPane.showInputDialog(this, "Ingresa la IP del servidor:", "127.0.0.1");
                 socket = new Socket(ip, 12345);
                 areaConversacion.append("Conectado al servidor.\n");
@@ -51,7 +69,7 @@ public class InterfazCliente extends JFrame {
                 entrada = new DataInputStream(socket.getInputStream());
                 salida = new DataOutputStream(socket.getOutputStream());
 
-                // Hilo para recibir mensajes
+                // Hilo para recibir mensajes del servidor
                 new Thread(() -> {
                     try {
                         String mensaje;
@@ -69,6 +87,9 @@ public class InterfazCliente extends JFrame {
         }).start();
     }
 
+    /**
+     * Envía el mensaje escrito al servidor y lo muestra en la conversación.
+     */
     private void enviarMensaje() {
         String mensaje = campoMensaje.getText();
         if (!mensaje.isEmpty()) {
@@ -82,6 +103,9 @@ public class InterfazCliente extends JFrame {
         }
     }
 
+    /**
+     * Método principal para iniciar la interfaz gráfica.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(InterfazCliente::new);
     }

@@ -1,19 +1,31 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import javax.swing.*;
 
+/**
+ * InterfazServidor
+ * 
+ * Esta clase implementa una interfaz gráfica de servidor para un chat usando sockets.
+ * Permite aceptar la conexión de un cliente, enviar y recibir mensajes en tiempo real utilizando hilos.
+ */
 public class InterfazServidor extends JFrame {
+    // Área de texto para mostrar la conversación
     private JTextArea areaConversacion;
+    // Campo de texto para escribir mensajes
     private JTextField campoMensaje;
+    // Botón para enviar mensajes
     private JButton botonEnviar;
 
+    // Socket del servidor y del cliente, y flujos de entrada/salida
     private ServerSocket servidor;
     private Socket cliente;
     private DataOutputStream salida;
     private DataInputStream entrada;
 
+    /**
+     * Constructor: Inicializa la interfaz gráfica y arranca el servidor.
+     */
     public InterfazServidor() {
         setTitle("Servidor - Chat");
         setSize(400, 500);
@@ -35,13 +47,19 @@ public class InterfazServidor extends JFrame {
         add(scroll, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
+        // Acción al presionar el botón enviar
         botonEnviar.addActionListener(e -> enviarMensaje());
 
+        // Iniciar el servidor en un hilo separado
         iniciarServidor();
 
         setVisible(true);
     }
 
+    /**
+     * Inicia el servidor y espera la conexión de un cliente.
+     * Crea un hilo para recibir mensajes.
+     */
     private void iniciarServidor() {
         new Thread(() -> {
             try {
@@ -53,7 +71,7 @@ public class InterfazServidor extends JFrame {
                 entrada = new DataInputStream(cliente.getInputStream());
                 salida = new DataOutputStream(cliente.getOutputStream());
 
-                // Hilo para recibir mensajes
+                // Hilo para recibir mensajes del cliente
                 new Thread(() -> {
                     try {
                         String mensaje;
@@ -71,6 +89,9 @@ public class InterfazServidor extends JFrame {
         }).start();
     }
 
+    /**
+     * Envía el mensaje escrito al cliente y lo muestra en la conversación.
+     */
     private void enviarMensaje() {
         String mensaje = campoMensaje.getText();
         if (!mensaje.isEmpty()) {
@@ -84,6 +105,9 @@ public class InterfazServidor extends JFrame {
         }
     }
 
+    /**
+     * Método principal para iniciar la interfaz gráfica.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(InterfazServidor::new);
     }
