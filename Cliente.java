@@ -20,7 +20,7 @@ public class Cliente {
     public void iniciar() {
         try {
             // Conectar al servidor en la IP y puerto especificados
-            socket = new Socket("192.168.100.37", 12345);
+            socket = new Socket("", 12345);
             System.out.println("Conectado al servidor");
 
             entrada = new DataInputStream(socket.getInputStream());
